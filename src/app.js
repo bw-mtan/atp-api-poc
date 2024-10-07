@@ -1,4 +1,5 @@
 const express = require('express');
+require("dotenv").config();
 const app = express();
 const { Web3 } = require("web3");
 const fs = require("fs");
@@ -13,7 +14,8 @@ app.get("/deploy", async (req, res) => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync("DBToken.json"));
     const network = process.env.ETHEREUM_NETWORK;
     const INFURA_API_KEY = process.env.INFURA_PROJECT_ID;
-    console.log('kEY', network, INFURA_API_KEY)
+    console.log('kEY', network, INFURA_API_KEY);
+   //  console.log('abi', abi)
     const web3 = new Web3(
         new Web3.providers.HttpProvider(
             `https://${network}.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
@@ -27,10 +29,13 @@ app.get("/deploy", async (req, res) => {
     web3.eth.accounts.wallet.add(signer);
 
     // Using the signing account to deploy the contract
-    const contract = new web3.eth.Contract(abi);
+    const contract = new web3.eth.Contract(abi, `${process.env.CONTRACT_ADDRESS}`);
     contract.options.data = bytecode;
     const deployTx = contract.deploy("DB TEST COIN", "DBCOIN", 50000);
-    const deployedContract = await deployTx
+    console.log('contract', contract.address, contract);
+    console.log('--------');
+   //  console.log('deploy', deployTx);
+   /* const deployedContract = await deployTx
         .send({
             from: signer.address,
             gas: await deployTx.estimateGas(),
@@ -40,8 +45,10 @@ app.get("/deploy", async (req, res) => {
             console.log(`https://${network}.etherscan.io/tx/${txhash}`);
         });
     // The contract is now deployed on chain!
-    console.log(`Contract deployed at ${deployedContract.options.address}`);
-    res.json({ "message": `Contract deployed at ${deployedContract.options.address}` });
+    console.log(`Contract deployed at ${deployedContract.options.address}`);*/
+    // console.log('deployed', deployTx.address, deployTx);
+
+    res.json({ "message": `Contract deployed` });
 });
 app.listen(3000, () => {
     console.log("Server running on port 3000");
