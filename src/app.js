@@ -32,20 +32,20 @@ app.get("/deploy", async (req, res) => {
     const contract = new web3.eth.Contract(abi, `${process.env.CONTRACT_ADDRESS}`);
     contract.options.data = bytecode;
     const deployTx = contract.deploy("DB TEST COIN", "DBCOIN", 50000);
-    console.log('contract', contract.address, contract);
     console.log('--------');
    //  console.log('deploy', deployTx);
-   /* const deployedContract = await deployTx
+ 
+ const deployedContract = await deployTx
         .send({
             from: signer.address,
-            gas: await deployTx.estimateGas(),
+            gas: 100000 // await deployTx.estimateGas(),
         })
         .once("transactionHash", (txhash) => {
             console.log(`Mining deployment transaction ...`);
             console.log(`https://${network}.etherscan.io/tx/${txhash}`);
         });
     // The contract is now deployed on chain!
-    console.log(`Contract deployed at ${deployedContract.options.address}`);*/
+    console.log(`Contract deployed at ${deployedContract.options.address}`); 
     // console.log('deployed', deployTx.address, deployTx);
 
     res.json({ "message": `Contract deployed` });
