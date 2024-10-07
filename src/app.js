@@ -14,7 +14,7 @@ app.get("/deploy", async (req, res) => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync("DBToken.json"));
     const network = process.env.ETHEREUM_NETWORK;
     const INFURA_API_KEY = process.env.INFURA_PROJECT_ID;
-    console.log('kEY', network, INFURA_API_KEY);
+    console.log('API Key', network, INFURA_API_KEY);
     //  console.log('abi', abi)
     const web3 = new Web3(
         new Web3.providers.HttpProvider(
@@ -34,7 +34,7 @@ app.get("/deploy", async (req, res) => {
     // const deployTx = contract.deploy("DB TEST COIN", "DBCOIN", 50000);
     const deployTx = contract.deploy({
         data: bytecode,
-        arguments:["DB TEST COIN", "DBCOIN", 50000]
+        arguments:["DB TEST COIN", "DBCOIN", 50000 * 10 ** 18]
     });
     
     // const gas = await deployTxn.estimateGas();
@@ -51,7 +51,7 @@ app.get("/deploy", async (req, res) => {
     const deployedContract = await deployTx
         .send({
             from: signer.address,
-            gas: 300000 //await deployTx.estimateGas(),
+            gas: 3000000 //await deployTx.estimateGas(),
         })
         .once("transactionHash", (txhash) => {
             console.log(`Mining deployment transaction ...`);

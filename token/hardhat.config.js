@@ -11,7 +11,8 @@ module.exports = {
       },
       sepolia: {
         url: `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
-        accounts: [process.env.DEPLOYER_PRIVATE_KEY.toString()]
+        accounts: [process.env.DEPLOYER_PRIVATE_KEY.toString()],
+        gasPrice: 'auto'
       }
     }
   };
