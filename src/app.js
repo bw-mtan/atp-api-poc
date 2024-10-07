@@ -7,7 +7,7 @@ const fs = require("fs");
 app.get("/msg", (req, res, next) => {
     res.json({ "message": "Hello, Spencer!" });
 });
-app.post('/registerBond', async(req,res)=>{
+app.post('/registerBond', async (req, res) => {
 
 });
 app.get("/deploy", async (req, res) => {
@@ -15,7 +15,7 @@ app.get("/deploy", async (req, res) => {
     const network = process.env.ETHEREUM_NETWORK;
     const INFURA_API_KEY = process.env.INFURA_PROJECT_ID;
     console.log('kEY', network, INFURA_API_KEY);
-   //  console.log('abi', abi)
+    //  console.log('abi', abi)
     const web3 = new Web3(
         new Web3.providers.HttpProvider(
             `https://${network}.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
@@ -29,25 +29,38 @@ app.get("/deploy", async (req, res) => {
     web3.eth.accounts.wallet.add(signer);
 
     // Using the signing account to deploy the contract
-    const contract = new web3.eth.Contract(abi, `${process.env.CONTRACT_ADDRESS}`);
+    const contract = new web3.eth.Contract(abi);
     contract.options.data = bytecode;
-    const deployTx = contract.deploy("DB TEST COIN", "DBCOIN", 50000);
-    console.log('--------');
-   //  console.log('deploy', deployTx);
- 
- const deployedContract = await deployTx
+    // const deployTx = contract.deploy("DB TEST COIN", "DBCOIN", 50000);
+    const deployTx = contract.deploy({
+        data: bytecode,
+        arguments:["DB TEST COIN", "DBCOIN", 50000]
+    });
+    
+    // const gas = await deployTxn.estimateGas();
+  /*  const signedTx = await web3.eth.accounts.signTransaction({
+        data: deployTxn.encodeABI(),
+        gas,
+        from: signer.address
+    }, '0x' + process.env.SIGNER_PRIVATE_KEY);
+    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    console.log('--------', receipt.contractAddress);
+    */
+    //  console.log('deploy', deployTx);
+    
+    const deployedContract = await deployTx
         .send({
             from: signer.address,
-            gas: 100000 // await deployTx.estimateGas(),
+            gas: 100000000 // await deployTx.estimateGas(),
         })
         .once("transactionHash", (txhash) => {
             console.log(`Mining deployment transaction ...`);
             console.log(`https://${network}.etherscan.io/tx/${txhash}`);
         });
     // The contract is now deployed on chain!
-    console.log(`Contract deployed at ${deployedContract.options.address}`); 
+    console.log(`Contract deployed at ${deployedContract.options.address}`);
     // console.log('deployed', deployTx.address, deployTx);
-
+   
     res.json({ "message": `Contract deployed` });
 });
 app.listen(3000, () => {
