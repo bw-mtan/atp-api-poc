@@ -1,5 +1,5 @@
 const { Web3 } = require("web3");
-
+// 699f2236cfc5c40852c6c428abfa07214ffaa4203ec56705698f27120
 // Loading the contract ABI and Bytecode
 // (the results of a previous compilation step)
 const fs = require("fs");
