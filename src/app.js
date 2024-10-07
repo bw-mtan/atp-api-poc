@@ -51,7 +51,7 @@ app.get("/deploy", async (req, res) => {
     const deployedContract = await deployTx
         .send({
             from: signer.address,
-            gas: 100000000 // await deployTx.estimateGas(),
+            gas: 300000 //await deployTx.estimateGas(),
         })
         .once("transactionHash", (txhash) => {
             console.log(`Mining deployment transaction ...`);
