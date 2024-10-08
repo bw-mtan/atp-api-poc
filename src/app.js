@@ -1,3 +1,5 @@
+
+/*
 const express = require('express');
 require("dotenv").config();
 const app = express();
@@ -8,6 +10,7 @@ app.get("/msg", (req, res, next) => {
     res.json({ "message": "Hello, Spencer!" });
 });
 app.post('/registerBond', async (req, res) => {
+    const {name, symbol, suppl}=req.body;
 
 });
 app.get("/deploy", async (req, res) => {
@@ -37,17 +40,6 @@ app.get("/deploy", async (req, res) => {
         arguments:["DB TEST COIN", "DBCOIN", 50000 * 10 ** 18]
     });
     
-    // const gas = await deployTxn.estimateGas();
-  /*  const signedTx = await web3.eth.accounts.signTransaction({
-        data: deployTxn.encodeABI(),
-        gas,
-        from: signer.address
-    }, '0x' + process.env.SIGNER_PRIVATE_KEY);
-    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-    console.log('--------', receipt.contractAddress);
-    */
-    //  console.log('deploy', deployTx);
-    
     const deployedContract = await deployTx
         .send({
             from: signer.address,
@@ -66,3 +58,4 @@ app.get("/deploy", async (req, res) => {
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
+*/
