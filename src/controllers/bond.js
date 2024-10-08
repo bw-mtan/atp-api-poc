@@ -56,6 +56,36 @@ const BondController = {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
 
+        try {
+          const data = contract.methods
+            .registrarTransfer(from, to, amount)
+            .encodeABI();
+      
+          await web3.eth.accounts
+            .signTransaction({ ...tx, data}, privateKey)
+            .then((signed) => {
+              web3.eth
+                .sendSignedTransaction(signed.rawTransaction)
+                .then((response) => {
+                  console.log(response);
+                  res.status(201);
+                  res.json({
+                    message: `Successful transfer of ${amount} tokens from ${from} to ${to}`,
+                    transactionHash: response.transactionHash,
+                    blockNumber: response.blockNumber,
+                    swapid: response.data,
+                    // resp: response
+                  })
+                })
+                .catch((err) => {
+                  res.status(400);
+                  res.json({ message: err.message });
+                });
+            })
+        } catch (error) {
+          res.status(400);
+          res.json({ message: error.message });
+        }
         res.json("Bond Transfer was successfully.")
     }
 
