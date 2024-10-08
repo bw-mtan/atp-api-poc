@@ -51,6 +51,11 @@ const BondController = {
         res.status(201).json(message);
     },
     transferBond: (req, res) => {
+        const { address, amount } = req.body;
+        if (!address || !amount) {
+            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+        }
+
         res.json("Bond Transfer was successfully.")
     }
 
