@@ -3,5 +3,5 @@ const { BondController } = require("../controllers/bond.js");
 
 const router = new Router();
 router.post("/api/v1/bond/register", BondController.registerBond);
-router.get("/api/v1/bond/transfer", BondController.transferBond);
+router.post("/api/v1/bond/transfer", BondController.transferBond);
 module.exports = { router };
