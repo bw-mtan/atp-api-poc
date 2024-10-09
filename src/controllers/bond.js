@@ -82,14 +82,15 @@ const BondController = {
             await web3.eth.accounts
                 .signTransaction({ ...tx, data }, privateKey)
                 .then((signed) => {
+                    console.log('SIGNED', signed);
                     web3.eth
                         .sendSignedTransaction(signed.rawTransaction)
                         .then((response) => {
                             console.log('-----', response);
-                            res.status(20).json({
+                            res.status(201).json({
                                 message: `Successful transfer of ${amount} tokens to ${address}`,
                                 transactionHash: response.transactionHash,
-                                blockNumber: response.blockNumber,
+                                blockNumber: Number(response.blockNumber),
                                 // swapid: response.data,
                                 // resp: response
                             })
@@ -103,7 +104,7 @@ const BondController = {
             console.log('----catch 2----', error.message)
             res.status(400).json({ message: error.message });
         }
-        res.json("Bond Transfer was successfully.")
+        // res.json("Bond Transfer was successful.")
     }
 
 };
