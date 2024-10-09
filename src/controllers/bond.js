@@ -26,7 +26,7 @@ const connectContract = () => {
 };
 const BondController = {
     registerBond: async (req, res) => {
-        const { name, symbol, supply, isin, description,issuerName,  } = req.body;
+        const { name, symbol, supply, isin, description,issuerName, maturityDate,  price, nominalValue, yield, scTemplateId} = req.body;
         if (!name || !symbol || !supply) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
