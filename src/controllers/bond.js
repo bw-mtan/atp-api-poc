@@ -5,7 +5,6 @@ const { readDb, writeDb } = require('./tempdb');
 const path = require('path');
 const network = process.env.ETHEREUM_NETWORK;
 const connectContract = () => {
-    console.log('poath', path.resolve("./", "DBToken.json"))
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "DBToken.json")));
     const network = process.env.ETHEREUM_NETWORK;
     const web3 = new Web3(
@@ -77,15 +76,16 @@ const BondController = {
         res.status(201).json(message);
     },
     transferBond: async (req, res) => {
-        const { address, amount } = req.body;
-        if (!address || !amount) {
+        const { address, amount, contract } = req.body;
+        if (!address || !amount || !contract) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
 
         try {
+            console.log('testing', amount, address);
             const { contract, web3, signer } = connectContract();
             const privateKey = '0x' + process.env.SIGNER_PRIVATE_KEY;
-
+            console.log('------here-----', signer.address)
             const data = contract.methods
                 .transferToken(address, amount)
                 .encodeABI();
@@ -96,16 +96,16 @@ const BondController = {
                 gasPrice: await web3.eth.getGasPrice(),
                 gas: 3000000 //await deployTx.estimateGas(),
             }
+            console.log('-----try------')
             await web3.eth.accounts
                 .signTransaction({ ...tx, data }, privateKey)
                 .then((signed) => {
                     web3.eth
                         .sendSignedTransaction(signed.rawTransaction)
                         .then((response) => {
-                            console.log(response);
-                            res.status(201);
-                            res.json({
-                                message: `Successful transfer of ${amount} tokens from ${from} to ${to}`,
+                            console.log('-----', response);
+                            res.status(20).json({
+                                message: `Successful transfer of ${amount} tokens to ${address}`,
                                 transactionHash: response.transactionHash,
                                 blockNumber: response.blockNumber,
                                 // swapid: response.data,
@@ -113,10 +113,12 @@ const BondController = {
                             })
                         })
                         .catch((err) => {
+                            console.log('----catch 1----', err.message)
                             res.status(400).json({ message: err.message });
                         });
                 })
         } catch (error) {
+            console.log('----catch 2----', error.message)
             res.status(400).json({ message: error.message });
         }
         res.json("Bond Transfer was successfully.")
