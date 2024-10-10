@@ -51,6 +51,7 @@ const BondController = {
             });
         const message = {
             contractAddress: deployedContract.options.address,
+            whitelistAddress: await deployedContract.methods .whitelistAddress() .call(),
             txHash,
             txnUrl
         }
@@ -59,7 +60,7 @@ const BondController = {
     },
     transferBond: async (req, res) => {
         const { address, amount, contract } = req.body;
-        if (!address || !amount || !contract) {
+        if (!address || !amount ) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
 
@@ -74,7 +75,8 @@ const BondController = {
             const tx = {
                 from: signer.address,
                 data,
-                to: "0x6560112FE83cD1EDb5A54c458D5a6D92e1FD3070",
+                // DBToken contract address inserted here
+                to: "0x589f3eC5163802261457372Ae933EDe3661389C7",
                 gasPrice: await web3.eth.getGasPrice(),
                 gas: 3000000 //await deployTx.estimateGas(),
             }
