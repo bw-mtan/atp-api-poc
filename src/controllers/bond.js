@@ -5,6 +5,7 @@ const { readDb, writeDb } = require('./tempdb');
 const path = require('path');
 const {toTimeStamp} = require('../utils/timestamp');
 const network = process.env.ETHEREUM_NETWORK;
+const assets = require(path.resolve('./db',"bond.json"));
 const connectContract = () => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "DBToken.json")));
     const network = process.env.ETHEREUM_NETWORK;
@@ -28,11 +29,11 @@ const connectContract = () => {
 const BondController = {
     registerBond: async (req, res) => {
         const { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId } = req.body;
-        console.log('date', maturityDate, toTimeStamp(maturityDate))
+        // console.log('date', maturityDate, toTimeStamp(maturityDate))
         if (!name || !symbol || !supply) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
-        console.log('test', supply, price, nominalValue)
+
         const { contract, bytecode, signer } = connectContract();
         const deployTx = contract.deploy({
             data: bytecode,
@@ -48,18 +49,18 @@ const BondController = {
             .once("transactionHash", (txhash) => {
                 txHash = txhash;
                 txnUrl = `https://${network}.etherscan.io/tx/${txhash}`;
-                console.log(`Mining deployment transaction ...`);
-                console.log(txnUrl);
+                console.log(`Mining deployment transaction ...${txnUrl}`);
             });
         const message = {
             contractAddress: deployedContract.options.address,
             txHash,
             txnUrl
         }
-        const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId };
+        const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId, ...message };
         writeDb(newData, 'bond.json');
-        res.status(201).json({ ...newData, ...message })
-        // res.status(201).json(message);
+        res.status(201).json({ ...newData });
+    
+       //  res.status(201).json({"name":"Demo Token DB","symbol":"DBCOIN2","supply":4000,"isin":"300100","description":"This is demo DB token","issuerName":"AB Holding Company","maturityDate":"2030-05-25","price":"50","nominalValue":"800002033","yieldPercent":"2","scTemplateId":0,"contractAddress":"0x4034A8bf548d7C4AF21f35666Ce24F97fe836bC4","txHash":"0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d","txnUrl":"https://sepolia.etherscan.io/tx/0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d"});
     },
     transferBond: async (req, res) => {
         const { address, amount, contract } = req.body;
@@ -109,6 +110,9 @@ const BondController = {
             res.status(400).json({ message: error.message });
         }
         // res.json("Bond Transfer was successful.")
+    },
+    listAllBond: async(req,res)=>{
+
     }
 
 };
