@@ -3,6 +3,7 @@ const fs = require("fs");
 const { Web3 } = require("web3");
 const { readDb, writeDb } = require('./tempdb');
 const path = require('path');
+const {toTimeStamp} = require('../utils/timestamp');
 const network = process.env.ETHEREUM_NETWORK;
 const connectContract = () => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "DBToken.json")));
@@ -26,15 +27,16 @@ const connectContract = () => {
 };
 const BondController = {
     registerBond: async (req, res) => {
-        const { name, symbol, supply, isin, description,issuerName, maturityDate,  price, nominalValue, yield, scTemplateId} = req.body;
+        const { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId } = req.body;
+        console.log('date', maturityDate, toTimeStamp(maturityDate))
         if (!name || !symbol || !supply) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
-       
+        console.log('test', supply, price, nominalValue)
         const { contract, bytecode, signer } = connectContract();
         const deployTx = contract.deploy({
             data: bytecode,
-            arguments: [name, symbol, supply]
+            arguments: [name, symbol, supply, description, issuerName,Number(isin),Number(price * 100),Number(nominalValue * 100),toTimeStamp(maturityDate),Number(yieldPercent * 100)]
         });
         let txHash = null;
         let txnUrl = null;
@@ -54,8 +56,10 @@ const BondController = {
             txHash,
             txnUrl
         }
-        writeDb({ name, symbol, supply, ...message });
-        res.status(201).json(message);
+        const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId };
+        writeDb(newData, 'bond.json');
+        res.status(201).json({ ...newData, ...message })
+        // res.status(201).json(message);
     },
     transferBond: async (req, res) => {
         const { address, amount, contract } = req.body;
