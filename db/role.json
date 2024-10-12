@@ -1,0 +1,7 @@
+[
+    {"roleId": 1, "roleName": "registrar"},
+    {"roleId": 2, "roleName": "techadmin"},
+    {"roleId": 3, "roleName": "issuer"},
+    {"roleId": 4, "roleName": "investor"},
+    {"roleId": 5, "roleName": "paying_agent"}
+]

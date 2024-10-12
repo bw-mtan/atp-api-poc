@@ -8,7 +8,6 @@ const network = process.env.ETHEREUM_NETWORK;
 const assets = require(path.resolve('./db',"bond.json"));
 const connectContract = () => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "DBToken.json")));
-    const network = process.env.ETHEREUM_NETWORK;
     const web3 = new Web3(
         new Web3.providers.HttpProvider(
             `https://${network}.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
@@ -112,7 +111,7 @@ const BondController = {
         // res.json("Bond Transfer was successful.")
     },
     listAllBond: async(req,res)=>{
-
+        await res.status(200).json(assets);
     }
 
 };
