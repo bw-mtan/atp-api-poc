@@ -7,7 +7,9 @@ const CustodyController = {
         await res.status(200).json(custody);
     },
     getWallet: async (req, res) => {
-        await res.status(200).json('wallet retrieve');
+        const { id } = req.params;
+        const data = custody.filter(x => x.userid == "registar2");
+        await res.status(200).json(data);
     }
 }
 module.exports = { CustodyController };

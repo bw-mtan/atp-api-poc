@@ -62,11 +62,10 @@ const BondController = {
        //  res.status(201).json({"name":"Demo Token DB","symbol":"DBCOIN2","supply":4000,"isin":"300100","description":"This is demo DB token","issuerName":"AB Holding Company","maturityDate":"2030-05-25","price":"50","nominalValue":"800002033","yieldPercent":"2","scTemplateId":0,"contractAddress":"0x4034A8bf548d7C4AF21f35666Ce24F97fe836bC4","txHash":"0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d","txnUrl":"https://sepolia.etherscan.io/tx/0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d"});
     },
     transferBond: async (req, res) => {
-        const { address, amount, contract } = req.body;
+        const { address, amount } = req.body;
         if (!address || !amount || !contract) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
-
         try {
             console.log('testing', amount, address);
             const { contract, web3, signer } = connectContract();
