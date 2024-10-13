@@ -10,16 +10,16 @@ const assets = require(path.resolve('./db', "bond.json"));
 const connectContract = (userid) => {
     let pKey = null;
     if (userid) {
-        console.log('fetching', userid);
         fetch(`http://localhost:3000/api/v1/custody/wallet/${userid}`)
             .then(async res => {
-                console.log('response', await res.json());
-                return "success";
+                // const resp = res.json();
+                const response = await res.json();
+                if (response.length > 0) {
+                    pKey = response[0].privateKey;
+                }
             })
             .catch(err => console.log('error', err));
     }
-    return "userid not found";
-    /*
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "DBToken.json")));
     
     const web3 = new Web3(
@@ -28,25 +28,25 @@ const connectContract = (userid) => {
             { timeout: 10e3 }
         ),
     );
-    const pKey= userid ||  ('0x' + process.env.SIGNER_PRIVATE_KEY);
-    const signer = web3.eth.accounts.privateKeyToAccount(pKey);
+    const privateKey= userid && pKey ? pKey : ('0x' + process.env.SIGNER_PRIVATE_KEY);
+    const signer = web3.eth.accounts.privateKeyToAccount(privateKey);
+    console.log('private Key', privateKey, signer);
     web3.eth.accounts.wallet.add(signer);
 
     // Using the signing account to deploy the contract
     const contract = new web3.eth.Contract(abi);
     contract.options.data = bytecode;
     return { contract, bytecode, signer, web3 };
-    */
 };
 const BondController = {
     registerBond: async (req, res) => {
-        const { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId } = req.body;
+        const { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, userid } = req.body;
         // console.log('date', maturityDate, toTimeStamp(maturityDate))
-        if (!name || !symbol || !supply) {
+        if (!name || !symbol || !supply || !userid) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
 
-        const { contract, bytecode, signer } = connectContract();
+        const { contract, bytecode, signer } = connectContract(userid);
         const deployTx = contract.deploy({
             data: bytecode,
             arguments: [name, symbol, supply, description, issuerName, Number(isin), Number(price * 100), Number(nominalValue * 100), toTimeStamp(maturityDate), Number(yieldPercent * 100)]
@@ -68,23 +68,21 @@ const BondController = {
             txHash,
             txnUrl
         }
-        const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, scTemplateId, ...message };
+        const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, ...message };
         writeDb(newData, 'bond.json');
         res.status(201).json({ ...newData });
 
         //  res.status(201).json({"name":"Demo Token DB","symbol":"DBCOIN2","supply":4000,"isin":"300100","description":"This is demo DB token","issuerName":"AB Holding Company","maturityDate":"2030-05-25","price":"50","nominalValue":"800002033","yieldPercent":"2","scTemplateId":0,"contractAddress":"0x4034A8bf548d7C4AF21f35666Ce24F97fe836bC4","txHash":"0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d","txnUrl":"https://sepolia.etherscan.io/tx/0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d"});
     },
     transferBond: async (req, res) => {
-        const { address, amount, userid } = req.body;
+        const { address, amount, userid, contractAddress } = req.body;
         if (!address || !amount || !userid) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
-         connectContract(userid);
-         res.status(200).json("done");
-        /*
+          console.log('parameters', address, amount, userid, contractAddress);
           try {
               const { contract, web3, signer } = connectContract(userid);
-              const privateKey = '0x' + process.env.SIGNER_PRIVATE_KEY;
+              const privateKey = signer.privateKey;
               console.log('------here-----', signer.address)
               const data = contract.methods
                   .transferToken(address, amount)
@@ -92,7 +90,7 @@ const BondController = {
               const tx = {
                   from: signer.address,
                   data,
-                  to: "0x6560112FE83cD1EDb5A54c458D5a6D92e1FD3070",
+                  to: contractAddress,
                   gasPrice: await web3.eth.getGasPrice(),
                   gas: 3000000 //await deployTx.estimateGas(),
               }
@@ -119,7 +117,7 @@ const BondController = {
               console.error('----catch 2----', error.message)
               res.status(400).json({ message: error.message });
           }
-          */
+        
     },
     listAllBond: async (req, res) => {
         await res.status(200).json(assets);
