@@ -8,7 +8,7 @@ const CustodyController = {
     },
     getWallet: async (req, res) => {
         const { id } = req.params;
-        const data = custody.filter(x => x.userid == "registar2");
+        const data = custody.filter(x => x.userid === id);
         await res.status(200).json(data);
     }
 }
