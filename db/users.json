@@ -1,0 +1,34 @@
+[
+    {
+        "userid": "registar1",
+        "roleName": "registrar"
+    },
+    {
+        "userid": "registar2",
+        "roleName": "registrar"
+    },
+    {
+        "userid": "issuer1",
+        "roleName": "issuer"
+    },
+    {
+        "userid": "issuer2",
+        "roleName": "issuer"
+    },
+    {
+        "userid": "techadmin1",
+        "roleName": "techadmin"
+    },
+    {
+        "userid": "investor1",
+        "roleName": "investor"
+    },
+    {
+        "userid": "investor2",
+        "roleName": "investor"
+    },
+    {
+        "userid": "investor3",
+        "roleName": "investor"
+    }
+]

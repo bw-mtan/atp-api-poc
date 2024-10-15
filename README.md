@@ -10,3 +10,9 @@ curl --location 'localhost:3000/api/v1/bond/transfer' \
     "amount":10,
     "contract":"0x6560112FE83cD1EDb5A54c458D5a6D92e1FD3070"
 }'
+
+
+
+INFURA_PROJECT_ID=4b79a3a64964812d54c6d9d211a0
+SIGNER_PRIVATE_KEY=27f1524fe19e53abb1bcd7d6308986675b76c414e422f6d5cfdda4a6ff6a
+ETHEREUM_NETWORK=sepolia

@@ -1,47 +1,7 @@
 [
-    {
-        "idx": 0,
-        "name": "Select a role",
-        "role": null
-    },
-    {
-        "idx": 1,
-        "name": "Registrar 1",
-        "role":"registrar"
-    },
-    {
-        "idx": 2,
-        "name": "Registrar 2",
-        "role":"registrar"
-    },
-    {
-        "idx": 3,
-        "name": "Issuer 1",
-        "role":"issuer"
-    },
-    {
-        "idx": 4,
-        "name": "Issuer 2",
-        "role":"issuer"
-    },
-    {
-        "idx": 5,
-        "name": "Issuer 3",
-        "role":"issuer"
-    },
-    {
-        "idx": 6,
-        "name": "Investor A",
-        "role":"investor"
-    },
-    {
-        "idx": 7,
-        "name": "Investor B",
-        "role":"investor"
-    },
-    {
-        "idx": "8",
-        "name": "Investor C",
-        "role":"investor"
-    }
+    {"roleId": 1, "roleName": "registrar"},
+    {"roleId": 2, "roleName": "techadmin"},
+    {"roleId": 3, "roleName": "issuer"},
+    {"roleId": 4, "roleName": "investor"},
+    {"roleId": 5, "roleName": "paying_agent"}
 ]

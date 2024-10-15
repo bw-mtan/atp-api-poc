@@ -9,7 +9,6 @@ async function main() {
   // Configuring the connection to an Ethereum node
   const network = process.env.ETHEREUM_NETWORK;
   const INFURA_API_KEY=process.env.INFURA_PROJECT_ID;
-  console.log('kEY', network,  INFURA_API_KEY)
   const web3 = new Web3(
     new Web3.providers.HttpProvider(
       `https://${network}.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
@@ -37,9 +36,6 @@ async function main() {
     });
   // The contract is now deployed on chain!
   console.log(`Contract deployed at ${deployedContract.options.address}`);
-  console.log(
-    `Add SIMPLE_CONTRACT to the.env file to store the contract address: ${deployedContract.options.address}`,
-  );
 }
 
 require("dotenv").config();
