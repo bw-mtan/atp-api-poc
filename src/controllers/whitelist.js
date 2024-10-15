@@ -66,6 +66,7 @@ const KYCController = {
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
                                     console.log('-----', response);
+                                    writeDb({ address, contractAddress }, 'whitelist.json');
                                     res.status(201).json({
                                         message: `Successfully whitelisted ${address}`,
                                         transactionHash: response.transactionHash,
