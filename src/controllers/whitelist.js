@@ -5,6 +5,17 @@ const { readDb, writeDb } = require('./tempdb');
 const path = require('path');
 // This isn't used is it?
 const network = process.env.ETHEREUM_NETWORK;
+
+const getPrivateKey = async (userid) => {
+    const response = await fetch(`http://localhost:3000/api/v1/custody/wallet/${userid}`);
+
+    if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+    }
+    return await response.json();
+};
+
 const connectContract = (pKey) => {
     const { abi, bytecode } = JSON.parse(fs.readFileSync(path.resolve("./", "Whitelist.json")));
     const web3 = new Web3(
@@ -23,18 +34,10 @@ const connectContract = (pKey) => {
     contract.options.data = bytecode;
     return { contract, bytecode, signer, web3 };
 };
-const getPrivateKey = async (userid) => {
-    const response = await fetch(`http://localhost:3000/api/v1/custody/wallet/${userid}`);
 
-    if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-    }
-    return await response.json();
-};
 const KYCController = {
     addWhitelistRegistrar: async (req, res) => {
-        const { address, contractAddress, userid } = req.body;
+        const { address, whitelistContractAddress, userid } = req.body;
         if (!address) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
@@ -53,7 +56,7 @@ const KYCController = {
                         from: signer.address,
                         data,
                         // DBToken whitelist contract address inserted here
-                        to: contractAddress,
+                        to: whitelistContractAddress,
                         gasPrice: await web3.eth.getGasPrice(),
                         gas: 3000000 //await deployTx.estimateGas(),
                     }
@@ -66,7 +69,7 @@ const KYCController = {
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
                                     console.log('-----', response);
-                                    writeDb({ address, contractAddress }, 'whitelist.json');
+                                    writeDb({ address, whitelistContractAddress }, 'whitelist.json');
                                     res.status(201).json({
                                         message: `Successfully whitelisted ${address}`,
                                         transactionHash: response.transactionHash,
