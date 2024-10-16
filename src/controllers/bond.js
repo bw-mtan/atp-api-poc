@@ -64,6 +64,7 @@ const BondController = {
                 });
             const message = {
                 contractAddress: deployedContract.options.address,
+                whitelistAddress: await deployedContract.methods.getWhitelistAddress().call(),
                 txHash,
                 txnUrl
             }
