@@ -90,7 +90,6 @@ const BondController = {
             getPrivateKey(userid)
                 .then(async resp => {
                     const pvtKey = resp ? resp[0].privateKey : null;
-                    console.log('pvt', pvtKey)
                     const { contract, signer,web3 } = connectContract(pvtKey);
                     const privateKey = signer.privateKey;
                     const data = contract.methods
