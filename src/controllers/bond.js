@@ -39,9 +39,10 @@ const BondController = {
     registerBond: async (req, res) => {
         const { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, userid } = req.body;
         // console.log('date', maturityDate, toTimeStamp(maturityDate))
-        if (!name || !symbol || !supply || !userid) {
-            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+        if (!name || !symbol || !supply || !userid || !isin) {
+             return res.status(500).json({ statusCode:500, message: "Expected fields are not passed correctly." });
         }
+   
         getPrivateKey(userid).then(async resp => {
             const pvtKey = resp ? resp[0].privateKey : null;
             console.log('pvt', pvtKey)
@@ -70,27 +71,23 @@ const BondController = {
             }
             const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, ...message };
             writeDb(newData, 'bond.json');
-            res.status(201).json({ ...newData });
+            return res.status(201).json({ statusCode: 201, ...newData });
 
         }).catch(err => {
             console.error('Error', err);
-            res.status(400).json(err);
+            return res.status(400).json({ statusCode: 400, message: err });
         });
-
-
-        //  res.status(201).json({"name":"Demo Token DB","symbol":"DBCOIN2","supply":4000,"isin":"300100","description":"This is demo DB token","issuerName":"AB Holding Company","maturityDate":"2030-05-25","price":"50","nominalValue":"800002033","yieldPercent":"2","scTemplateId":0,"contractAddress":"0x4034A8bf548d7C4AF21f35666Ce24F97fe836bC4","txHash":"0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d","txnUrl":"https://sepolia.etherscan.io/tx/0x4ea1576116ffa9bfdc77f14cdc761e3a74f6326edbc4329b3e6504f422dc433d"});
     },
     transferBond: async (req, res) => {
         const { address, amount, userid, contractAddress } = req.body;
         if (!address || !amount || !userid) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
-        console.log('parameters', address, amount, userid, contractAddress);
         try {
             getPrivateKey(userid)
                 .then(async resp => {
                     const pvtKey = resp ? resp[0].privateKey : null;
-                    const { contract, signer,web3 } = connectContract(pvtKey);
+                    const { contract, signer, web3 } = connectContract(pvtKey);
                     const privateKey = signer.privateKey;
                     const data = contract.methods
                         .transferToken(address, amount)
@@ -108,7 +105,7 @@ const BondController = {
                             web3.eth
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
-                                    res.status(201).json({
+                                    return res.status(201).json({
                                         statusCode: 201,
                                         message: `Successful transfer of ${amount} tokens to ${address}`,
                                         transactionHash: response.transactionHash,
@@ -119,16 +116,16 @@ const BondController = {
                                 })
                                 .catch((err) => {
                                     console.error('----catch 1----', err.message)
-                                    res.status(400).json({ statusCode: 400, message: err.message });
+                                    return res.status(400).json({ statusCode: 400, message: err.message });
                                 });
                         })
                 }).catch(err => {
                     console.error('Error', err);
-                    res.status(400).json(err);
+                    returnres.status(400).json({ statusCode: 400, message: err.message });
                 });
         } catch (error) {
             console.error('----catch 2----', error.message)
-            res.status(400).json({ statusCode: 400, message: error.message });
+            return res.status(400).json({ statusCode: 400, message: error.message });
         }
 
     },
