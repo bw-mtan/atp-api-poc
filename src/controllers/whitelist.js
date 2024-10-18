@@ -37,7 +37,7 @@ const connectContract = (pKey) => {
 
 const KYCController = {
     addWhitelistRegistrar: async (req, res) => {
-        const { address, whitelistContractAddress, userid } = req.body;
+        const { address, whitelistAddress, userid } = req.body;
         if (!address) {
             return res.status(500).json({ message: "Expected fields are not passed correctly." });
         }
@@ -49,14 +49,14 @@ const KYCController = {
                     console.log('pvt', pvtKey);
                     const { contract, web3, signer } = connectContract(pvtKey);
                     console.log('------here-----', signer.address)
+                    console.log('----contract----', await contract.address)
                     const data = contract.methods
                         .addToWhitelist(address)
                         .encodeABI();
                     const tx = {
                         from: signer.address,
                         data,
-                        // DBToken whitelist contract address inserted here
-                        to: whitelistContractAddress,
+                        to: whitelistAddress,
                         gasPrice: await web3.eth.getGasPrice(),
                         gas: 3000000 //await deployTx.estimateGas(),
                     }
@@ -69,7 +69,7 @@ const KYCController = {
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
                                     console.log('-----', response);
-                                    writeDb({ address, whitelistContractAddress }, 'whitelist.json');
+                                    writeDb({ address, whitelistAddress }, 'whitelist.json');
                                     res.status(201).json({
                                         message: `Successfully whitelisted ${address}`,
                                         transactionHash: response.transactionHash,
