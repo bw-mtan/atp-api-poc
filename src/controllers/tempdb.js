@@ -13,7 +13,7 @@ function writeDb(obj, dbName = 'db.json') {
         const data = readDb(dbName);
         const newObj=[...data,obj];
         fs.writeFileSync(path.resolve('./db',dbName), JSON.stringify(newObj)) //overwrites current data
-        return console.log('record inserted successfully');
+       // return console.log('record inserted successfully');
     } catch (err) {
         return console.error('error in writing', err)
     }

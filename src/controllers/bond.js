@@ -63,12 +63,14 @@ const BondController = {
                     txnUrl = `https://${network}.etherscan.io/tx/${txhash}`;
                     console.log(`Mining deployment transaction ...${txnUrl}`);
                 });
+                console.log('start time', new Date())
             const message = {
                 contractAddress: deployedContract.options.address,
                 whitelistAddress: await deployedContract.methods.getWhitelistAddress().call(),
                 txHash,
                 txnUrl
             }
+            console.log('stop time', new Date())
             const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, ...message };
             writeDb(newData, 'bond.json');
             return res.status(201).json({ statusCode: 201, ...newData });
@@ -121,7 +123,7 @@ const BondController = {
                         })
                 }).catch(err => {
                     console.error('Error', err);
-                    returnres.status(400).json({ statusCode: 400, message: err.message });
+                    return res.status(400).json({ statusCode: 400, message: err.message });
                 });
         } catch (error) {
             console.error('----catch 2----', error.message)
