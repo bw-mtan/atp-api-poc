@@ -5,7 +5,7 @@ const { readDb, writeDb } = require('./tempdb');
 const path = require('path');
 const { toTimeStamp } = require('../utils/timestamp');
 const network = process.env.ETHEREUM_NETWORK;
-const assets = require(path.resolve('./db', "bond.json"));
+
 
 const getPrivateKey = async (userid) => {
     const response = await fetch(`http://localhost:3000/api/v1/custody/wallet/${userid}`);
@@ -109,6 +109,7 @@ const BondController = {
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
                                     res.status(201).json({
+                                        statusCode: 201,
                                         message: `Successful transfer of ${amount} tokens to ${address}`,
                                         transactionHash: response.transactionHash,
                                         blockNumber: Number(response.blockNumber),
@@ -118,7 +119,7 @@ const BondController = {
                                 })
                                 .catch((err) => {
                                     console.error('----catch 1----', err.message)
-                                    res.status(400).json({ message: err.message });
+                                    res.status(400).json({ statusCode: 400, message: err.message });
                                 });
                         })
                 }).catch(err => {
@@ -127,11 +128,12 @@ const BondController = {
                 });
         } catch (error) {
             console.error('----catch 2----', error.message)
-            res.status(400).json({ message: error.message });
+            res.status(400).json({ statusCode: 400, message: error.message });
         }
 
     },
     listAllBond: async (req, res) => {
+        const assets = require(path.resolve('./db', "bond.json"));
         await res.status(200).json(assets);
     }
 

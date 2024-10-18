@@ -71,6 +71,7 @@ const KYCController = {
                                     console.log('-----', response);
                                     writeDb({ address, whitelistAddress }, 'whitelist.json');
                                     res.status(201).json({
+                                        statusCode: 201,
                                         message: `Successfully whitelisted ${address}`,
                                         transactionHash: response.transactionHash,
                                         blockNumber: Number(response.blockNumber),
@@ -80,7 +81,7 @@ const KYCController = {
                                 })
                                 .catch((err) => {
                                     console.log('----catch 1----', err.message)
-                                    res.status(400).json({ message: err.message });
+                                    res.status(400).json({  statusCode: 400, message: err.message });
                                 });
                         });
                 }).catch(err => {
@@ -90,20 +91,20 @@ const KYCController = {
 
         } catch (error) {
             console.log('----catch 2----', error.message)
-            res.status(400).json({ message: error.message });
+            res.status(400).json({   statusCode: 400,message: error.message });
         }
     },
     addWhitelistIssuer: async (req, res) => {
         const { address } = req.body;
         if (!address) {
-            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+            return res.status(500).json({   statusCode: 500,message: "Expected fields are not passed correctly." });
         }
         res.json("Issuer has been registered whitelisted.");
     },
     addWhitelistInvestor: async (req, res) => {
         const { address } = req.body;
         if (!address) {
-            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+            return res.status(500).json({   statusCode: 500,message: "Expected fields are not passed correctly." });
         }
         res.json("Investor has been successfully.");
     },
