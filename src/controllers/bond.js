@@ -7,6 +7,7 @@ const { toTimeStamp } = require('../utils/timestamp');
 const network = process.env.ETHEREUM_NETWORK;
 
 
+
 const getPrivateKey = async (userid) => {
     const response = await fetch(`http://localhost:3000/api/v1/custody/wallet/${userid}`);
 
@@ -71,6 +72,11 @@ const BondController = {
             }
             const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, ...message };
             writeDb(newData, 'bond.json');
+            const holders ={
+                contractAddress: message.contractAddress,
+                address: signer.address
+            };
+            writeDb(holders, 'holders.json');
             return res.status(201).json({ statusCode: 201, ...newData });
 
         }).catch(err => {
@@ -135,8 +141,12 @@ const BondController = {
 
     },
     listAllBond: async (req, res) => {
-        const assets = require(path.resolve('./db', "bond.json"));
-        await res.status(200).json(assets);
+       
+        const assets = fs.readFileSync(path.resolve('./db', "bond.json"), 'utf-8');
+        console.log('assets', JSON.parse(assets).length);
+      //  const assets = require(path.resolve('./db', "bond.json"));
+        
+        await res.status(200).json(JSON.parse(assets));
     }
 
 };

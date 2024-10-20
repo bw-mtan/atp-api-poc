@@ -1,1 +1,1 @@
-[]
+[{"name":"DEMO COIN 1","symbol":"MITCOIN1","supply":100,"isin":"12345","description":"MIT COUNT DEMO","issuerName":"AB Holding Company","maturityDate":"2030-06-25","price":"300","nominalValue":"3000","yieldPercent":"2","contractAddress":"0x2a107AD749DA6F02Fd04D76fD077A928D6f83F74","whitelistAddress":"0xdB214A83C21aa76283e2EDE43c6b222eC660FFb6","txHash":"0xf03a47ba493a6ea5f72083b2753d114f43b095c78d5f800021c44976937d3fa9","txnUrl":"https://sepolia.etherscan.io/tx/0xf03a47ba493a6ea5f72083b2753d114f43b095c78d5f800021c44976937d3fa9"}]
