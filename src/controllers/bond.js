@@ -143,10 +143,19 @@ const BondController = {
     listAllBond: async (req, res) => {
        
         const assets = fs.readFileSync(path.resolve('./db', "bond.json"), 'utf-8');
-        console.log('assets', JSON.parse(assets).length);
+        const holders = JSON.parse(fs.readFileSync(path.resolve('./db', "holders.json"), 'utf-8'));
+        const data = JSON.parse(assets);
+        const newMap = data.map(x=>{
+            const numHolders  = holders.filter(q=>q.contractAddress ===  x.contractAddress );
+            return {
+                ...x,
+                numHolders: numHolders.length
+            }
+        })
+        
       //  const assets = require(path.resolve('./db', "bond.json"));
         
-        await res.status(200).json(JSON.parse(assets));
+        await res.status(200).json(newMap);
     }
 
 };
