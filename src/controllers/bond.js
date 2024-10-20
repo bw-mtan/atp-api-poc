@@ -63,14 +63,12 @@ const BondController = {
                     txnUrl = `https://${network}.etherscan.io/tx/${txhash}`;
                     console.log(`Mining deployment transaction ...${txnUrl}`);
                 });
-                console.log('start time', new Date())
             const message = {
                 contractAddress: deployedContract.options.address,
                 whitelistAddress: await deployedContract.methods.getWhitelistAddress().call(),
                 txHash,
                 txnUrl
             }
-            console.log('stop time', new Date())
             const newData = { name, symbol, supply, isin, description, issuerName, maturityDate, price, nominalValue, yieldPercent, ...message };
             writeDb(newData, 'bond.json');
             return res.status(201).json({ statusCode: 201, ...newData });
@@ -107,6 +105,11 @@ const BondController = {
                             web3.eth
                                 .sendSignedTransaction(signed.rawTransaction)
                                 .then((response) => {
+                                    const newData={
+                                        contractAddress,
+                                        address
+                                    };
+                                    writeDb(newData, 'holders.json');
                                     return res.status(201).json({
                                         statusCode: 201,
                                         message: `Successful transfer of ${amount} tokens to ${address}`,
