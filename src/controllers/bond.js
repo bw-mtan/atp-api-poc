@@ -149,7 +149,6 @@ const BondController = {
         const newMap = data.map(x=>{
             const numHolders  = holders.filter(q=>q.contractAddress ===  x.contractAddress );
             const numWhitelist  = whitelist.filter(q=>q.whitelistAddress ===  x.whitelistAddress );
-            console.log('numWhite', numWhitelist);
             return {
                 ...x,
                 numHolders: numHolders.length,
