@@ -87,7 +87,7 @@ const BondController = {
     transferBond: async (req, res) => {
         const { address, amount, userid, contractAddress } = req.body;
         if (!address || !amount || !userid) {
-            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+            return res.status(500).json({ statusCode: 500, message: "Expected fields are not passed correctly." });
         }
         try {
             getPrivateKey(userid)
@@ -119,6 +119,7 @@ const BondController = {
                                     return res.status(201).json({
                                         statusCode: 201,
                                         message: `Successful transfer of ${amount} tokens to ${address}`,
+                                        txnUrl: `https://${network}.etherscan.io/tx/${response.transactionHash}`,
                                         transactionHash: response.transactionHash,
                                         blockNumber: Number(response.blockNumber),
                                         // swapid: response.data,

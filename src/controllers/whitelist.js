@@ -39,7 +39,7 @@ const KYCController = {
     addWhitelistRegistrar: async (req, res) => {
         const { address, whitelistAddress, userid } = req.body;
         if (!address) {
-            return res.status(500).json({ message: "Expected fields are not passed correctly." });
+            return res.status(500).json({ statusCode: 500, message: "Expected fields are not passed correctly." });
         }
 
         try {
