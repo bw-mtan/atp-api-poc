@@ -144,12 +144,16 @@ const BondController = {
        
         const assets = fs.readFileSync(path.resolve('./db', "bond.json"), 'utf-8');
         const holders = JSON.parse(fs.readFileSync(path.resolve('./db', "holders.json"), 'utf-8'));
+        const whitelist = JSON.parse(fs.readFileSync(path.resolve('./db', "whitelist.json"), 'utf-8'));
         const data = JSON.parse(assets);
         const newMap = data.map(x=>{
             const numHolders  = holders.filter(q=>q.contractAddress ===  x.contractAddress );
+            const numWhitelist  = whitelist.filter(q=>q.whitelistAddress ===  x.whitelistAddress );
+            console.log('numWhite', numWhitelist);
             return {
                 ...x,
-                numHolders: numHolders.length
+                numHolders: numHolders.length,
+                numWhitelist: numWhitelist.length
             }
         })
         
