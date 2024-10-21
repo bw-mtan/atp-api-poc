@@ -46,7 +46,7 @@ const BondController = {
    
         getPrivateKey(userid).then(async resp => {
             const pvtKey = resp ? resp[0].privateKey : null;
-            console.log('pvt', pvtKey)
+         
             const { contract, bytecode, signer } = connectContract(pvtKey);
             const deployTx = contract.deploy({
                 data: bytecode,
