@@ -46,10 +46,8 @@ const KYCController = {
             getPrivateKey(userid)
                 .then(async resp => {
                     const pvtKey = resp ? resp[0].privateKey : null;
-                    console.log('pvt', pvtKey);
                     const { contract, web3, signer } = connectContract(pvtKey);
                     console.log('------here-----', signer.address)
-                    console.log('----contract----', await contract.address)
                     const data = contract.methods
                         .addToWhitelist(address)
                         .encodeABI();
